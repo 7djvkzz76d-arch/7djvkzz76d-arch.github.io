@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://7djvkzz76d-arch.github.io/sitemap.xml
