@@ -1,0 +1,17 @@
+Dodge Rush H5 Games Ads 当前配置
+
+- 广告平台：Google AdSense H5 Games Ads
+- Publisher ID：ca-pub-1697827837177436
+- 游戏页已加载 Google AdSense H5 Games Ads 代码。
+- 激励广告位：revive-life
+- 插屏广告位：restart-game
+- 激励奖励只在 Google adViewed 回调后发放。
+- 没有可用广告时不会伪造奖励。
+- H5 Games Ads 申请已提交，最终是否可投放以 Google 审核和广告可用性为准。
+
+上线检查：
+1. AdSense/H5 Games Ads 审核通过。
+2. 确认游戏页可以加载 H5 Games Ads。
+3. 用“看广告复活”测试：完整观看才复活，关闭/无广告不复活。
+4. 用“再来一次”测试插屏只在自然游戏间隔出现。
+5. 不点击自己的广告，不鼓励玩家点击广告。
