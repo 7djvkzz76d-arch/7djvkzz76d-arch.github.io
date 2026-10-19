@@ -366,7 +366,10 @@ async function loadBoard(){
     box.innerHTML=(best.length?best.map((x,i)=>`<div class="rank"><b>#${i+1}</b><span>${esc(x.player)} (${esc(x.country||'')})</span><strong>${Number(x.score)||0}</strong></div>`).join(''):'暂无成绩')+
       (mine?`<p class="small" style="margin-top:12px">你的云端最高分：<b>${mine}</b>　（本机最高：<b>${saveData.best}</b>）</p>`:'');
   }catch(e){
-    box.textContent='排行榜暂时无法加载，请稍后重试';
+    const localScore=Math.max(0,Number(saveData.best)||0);
+    const localName=esc(String($('player').value.trim()||'本机玩家'));
+    const localCountry=esc(String($('country').value||'').toUpperCase());
+    box.innerHTML='<div class="rank"><b>本机</b><span>'+localName+' ('+localCountry+')</span><strong>'+localScore+'</strong></div><p class="small" style="margin-top:12px">云端排行榜暂时不可用；上方仅显示本机最高分，不代表全球排名，也不会在此处上传或公开。</p>';
   }
 }
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
