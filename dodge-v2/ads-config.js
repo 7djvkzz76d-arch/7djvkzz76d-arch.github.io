@@ -1,7 +1,8 @@
 // Dodge Rush H5 Games Ads configuration.
 // Google H5 Games Ads controls actual availability.
 // Never grant a reward unless adViewed fires.
-window.DODGE_ADS_READY = false;
+// Preserve a readiness signal if Google's onReady callback fired before this file loaded.
+window.DODGE_ADS_READY = window.DODGE_ADS_READY === true;
 window.DODGE_AD_CONFIG = {
   provider:'google-h5-games',
   publisherId:'ca-pub-1697827837177436',
