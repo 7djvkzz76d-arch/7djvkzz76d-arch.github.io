@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Dodge Rush 难度计算器：根据当前公开游戏代码，估算生存时间对应的分数、障碍速度基准和障碍生成间隔。">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://7djvkzz76d-arch.github.io/practice-lab.html">
+<title>Dodge Rush 难度计算器：生存时间与障碍节奏</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f5f7fb;color:#182235;font:16px/1.8 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:900px;margin:auto;padding:24px 18px 56px}
+nav{display:flex;gap:16px;flex-wrap:wrap;font-size:14px}
+a{color:#2456a6}
+h1{font-size:clamp(30px,5vw,44px);line-height:1.25;margin:24px 0 10px}
+h2{font-size:22px;margin:34px 0 10px}
+p,li{color:#43516a}
+.intro,.panel{background:#fff;border:1px solid #dce3ef;border-radius:16px;padding:18px;margin:18px 0}
+.calc{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:center}
+input[type=range]{width:100%;accent-color:#315fbd}
+input[type=number]{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:10px;font:inherit}
+.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}
+.metric{background:#f3f6fc;border-radius:12px;padding:14px}
+.metric span{display:block;color:#65728a;font-size:13px}
+.metric strong{font-size:24px;display:block;margin-top:4px;font-variant-numeric:tabular-nums}
+.note{font-size:14px;color:#5b6679}
+table{width:100%;border-collapse:collapse;background:#fff}
+th,td{text-align:left;padding:10px;border-bottom:1px solid #e2e8f0}
+th{background:#eef3fb}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+.button{display:inline-block;padding:11px 16px;border-radius:10px;background:#2456a6;color:#fff;text-decoration:none}
+.button.alt{background:#e8eef9;color:#23416f}
+@media(max-width:620px){main{padding:18px 14px 40px}.calc{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr}.metric strong{font-size:20px}th,td{font-size:14px;padding:8px}}
+</style>
+</head>
+<body>
+<main>
+<nav aria-label="主要导航">
+<a href="/">首页</a><a href="/dodge-v2/">开始游戏</a><a href="/guide.html">玩法指南</a><a href="/about.html">关于项目</a>
+</nav>
+<h1>Dodge Rush 难度计算器</h1>
+<p class="intro">这个小工具把当前公开版本的分数增长、障碍速度和生成间隔公式整理成可调整的估算器。它不是成绩预测器，也不代表每一局都会出现完全相同的障碍序列；障碍位置和实际速度仍包含随机因素。</p>
+
+<section class="panel" aria-labelledby="calc-title">
+<h2 id="calc-title">调整预计生存时间</h2>
+<div class="calc">
+<div>
+<label for="seconds"><strong>预计生存时间（秒）</strong></label>
+<input id="seconds" type="range" min="0" max="180" step="1" value="30">
+<p class="note">拖动滑块，观察分数和障碍节奏如何变化。</p>
+</div>
+<div>
+<label for="secondsNumber"><strong>输入秒数</strong></label>
+<input id="secondsNumber" type="number" min="0" max="180" step="1" value="30">
+</div>
+</div>
+<div class="metrics" aria-live="polite">
+<div class="metric"><span>估算分数</span><strong id="scoreOut">300</strong></div>
+<div class="metric"><span>障碍速度基准</span><strong id="speedOut">316</strong></div>
+<div class="metric"><span>障碍生成间隔</span><strong id="intervalOut">0.327 秒</strong></div>
+<div class="metric"><span>理论生成频率</span><strong id="rateOut">约 3.1 次/秒</strong></div>
+</div>
+<p class="note" id="explain">当前估算基于每秒约 10 分，速度基准每秒增加 3.2，生成间隔按分数缩短。</p>
+</section>
+
+<h2>这些数字来自哪里？</h2>
+<table>
+<thead><tr><th>机制</th><th>当前代码中的规则</th><th>实际影响</th></tr></thead>
+<tbody>
+<tr><td>分数</td><td>每秒增加约 10 分</td><td>分数大致反映本局生存时间。</td></tr>
+<tr><td>障碍速度</td><td>速度基准从 220 开始，每秒增加 3.2</td><td>障碍会随时间变快；单个障碍速度会在基准值附近随机变化，约为基准的 0.72–1.27 倍。</td></tr>
+<tr><td>障碍生成间隔</td><td>max(0.16, 0.68 − 分数 / 850) 秒</td><td>分数达到约 442 时，间隔触及 0.16 秒下限。</td></tr>
+<tr><td>金币生成</td><td>每次生成障碍时有 28% 概率同时生成金币</td><td>金币不是每次都会出现，也不保证落在安全路线。</td></tr>
+<tr><td>强化道具</td><td>每次生成障碍时有 10% 概率生成一种道具</td><td>护盾、磁铁、金币倍增和减速道具都属于随机机会。</td></tr>
+</tbody>
+</table>
+
+<h2>按阶段练习</h2>
+<ul>
+<li><strong>0–15 秒：</strong>先熟悉触控或键盘移动，练习提前寻找障碍之间的空隙，不必主动追金币。</li>
+<li><strong>15–30 秒：</strong>观察障碍速度变化，只在路线清楚时收集金币；尽量使用小幅移动修正位置。</li>
+<li><strong>30–45 秒：</strong>生成间隔继续缩短，优先规划连续可通过的路线，不要为单个道具横穿危险区域。</li>
+<li><strong>约 45 秒以后：</strong>生成间隔已接近最低值，减少无必要的横向移动，重点观察下一批障碍的落点。</li>
+</ul>
+
+<h2>使用时需要知道的限制</h2>
+<ul>
+<li>计算器只根据当前代码中的公式计算，不模拟随机障碍的位置、碰撞结果或玩家操作。</li>
+<li>实际游戏会受设备帧率、屏幕尺寸、触控精度和随机生成影响。</li>
+<li>游戏分数、金币和皮肤是娱乐用途的本机虚拟数据，不具有现金价值。</li>
+<li>当前公开版本未启用云端排行榜或成绩上传；游戏记录保存在当前浏览器。</li>
+</ul>
+<div class="actions">
+<a class="button" href="/dodge-v2/">开始游戏</a>
+<a class="button alt" href="/guide.html">阅读完整玩法指南</a>
+</div>
+<footer class="note" style="margin-top:30px;border-top:1px solid #dce3ef;padding-top:18px">
+Dodge Rush · 独立 HTML5 游戏项目。页面数值根据公开游戏代码整理；若后续版本调整机制，请以游戏内实际表现和最新指南为准。
+</footer>
+</main>
+<script>
+(function(){
+ const range=document.getElementById('seconds');
+ const number=document.getElementById('secondsNumber');
+ const scoreOut=document.getElementById('scoreOut');
+ const speedOut=document.getElementById('speedOut');
+ const intervalOut=document.getElementById('intervalOut');
+ const rateOut=document.getElementById('rateOut');
+ const explain=document.getElementById('explain');
+ function render(value){
+  let t=Number(value);
+  if(!Number.isFinite(t))t=0;
+  t=Math.max(0,Math.min(180,Math.round(t)));
+  const score=Math.round(t*10);
+  const speed=220+t*3.2;
+  const interval=Math.max(.16,.68-score/850);
+  const rate=1/interval;
+  range.value=String(t);
+  number.value=String(t);
+  scoreOut.textContent=String(score);
+  speedOut.textContent=speed.toFixed(1);
+  intervalOut.textContent=interval.toFixed(3)+' 秒';
+  rateOut.textContent='约 '+rate.toFixed(1)+' 次/秒';
+  explain.textContent=score>=442?'达到约 442 分（约 44.2 秒）后，障碍生成间隔触及 0.16 秒下限。': '距离最低生成间隔还差约 '+Math.max(0,442-score)+' 分。';
+ }
+ range.addEventListener('input',function(){render(range.value)});
+ number.addEventListener('input',function(){render(number.value)});
+ render(30);
+})();
+</script>
+</body>
+</html>
