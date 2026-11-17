@@ -125,7 +125,7 @@ function applyReviveReward(){
   reviveInFlight=true;revived=true;running=true;paused=false;score+=20;armor=Math.max(1,armor);
   p.x=W/2;p.y=H*.78;obs=[];particles=[];$('flash').style.opacity=.7;
   setTimeout(()=>$('flash').style.opacity=0,100);
-  const previousRunId=runId;runId=newRunId();scoreSessionToken='';scoreSessionError='';runStartedAt=Date.now()-lastRunDurationSec*1000;toast('🛡️ 复活成功！获得至少1次抗撞保护');saveData.revives++;save();last=performance.now();requestScoreSession(runId);
+  const previousRunId=runId;runId=newRunId();runStartedAt=Date.now()-lastRunDurationSec*1000;toast('🛡️ 复活成功！获得至少1次抗撞保护');saveData.revives++;save();last=performance.now();
   $('gameBtns').style.display='block';$('powerbar').classList.remove('hidden');show('none');
   trackEvent('revive_completed',{runId:previousRunId,score:Math.floor(score),continuedRunId:runId});
   requestAnimationFrame(loop);
