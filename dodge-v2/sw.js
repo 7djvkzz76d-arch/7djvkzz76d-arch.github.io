@@ -1,4 +1,4 @@
-const CACHE='dodge-v2-ultimate-7';
+const CACHE='dodge-v2-ultimate-8';
 const CORE=['./','./index.html','./manifest.json','./ads-config.js','./icon.svg'];
 
 self.addEventListener('install',event=>{
